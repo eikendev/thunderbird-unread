@@ -17,4 +17,4 @@ Be aware that I have only tested the script using the Maildir format of Thunderb
 Requirements
 ------------
 
-Thunderbird Unread depends on [ripgrep](https://crates.io/crates/ripgrep) and [inotify-tools](https://github.com/inotify-tools/inotify-tools).
+Thunderbird Unread depends on `ripgrep <https://crates.io/crates/ripgrep>`_ and `inotify-tools <https://github.com/inotify-tools/inotify-tools>`_.
