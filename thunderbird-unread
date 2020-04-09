@@ -31,6 +31,16 @@ write_target () {
 	printf "%s  %s   " '' "$output" > "$TARGET_FILE"
 }
 
+write_target_clear () {
+	write_target '?'
+}
+
+exit_cleanup () {
+	write_target_clear
+}
+
+trap exit_cleanup EXIT
+
 accumulate_counts () {
 	local row
 	row="$(paste --delimiters=' ' "$SCRIPT_HOME"/*.subcount)"
@@ -84,7 +94,7 @@ while true; do
 
 	# shellcheck disable=SC2181
 	if [ $? -ne 0 ]; then
-		write_target '?'
+		write_target_clear
 		pkill -P $$
 		sleep 5s
 		continue
