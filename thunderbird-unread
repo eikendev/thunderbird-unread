@@ -89,17 +89,21 @@ monitor_account () {
 	done
 }
 
+# Clear the output file.
+write_target_clear
+
 while true; do
+	# Query the PID of Thunderbird.
 	tb_pid="$(pgrep -u $UID -x thunderbird)"
 
+	# If Thunderbird is not active, try again.
 	# shellcheck disable=SC2181
 	if [ $? -ne 0 ]; then
-		write_target_clear
-		pkill -P $$
-		sleep 5s
+		sleep 1s
 		continue
 	fi
 
+	# Setup one monitoring process per account.
 	for account in "$THUNDERBIRD_IMAPDIR"/*.unread; do
 		if [ -d "$account" ]; then
 			printf "%s\n" "Now monitoring '$account'."
@@ -107,5 +111,14 @@ while true; do
 		fi
 	done
 
+	sleep 1s
+
+	# Wait for Thunderbird to terminate.
 	tail --pid="$tb_pid" -f /dev/null
+
+	# Clear the output file.
+	write_target_clear
+
+	# Terminate all monitoring processes.
+	pkill -P $$
 done
