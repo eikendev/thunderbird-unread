@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+set -o errexit
+set -o errtrace
+
 THUNDERBIRD_HOME="$HOME/.thunderbird"
 THUNDERBIRD_PROFILE="$(sed -n '/Install/,$p' "$THUNDERBIRD_HOME/profiles.ini" | grep -m 1 -h -e 'Default=' | cut -c 9-)"
 THUNDERBIRD_IMAPDIR="$HOME/.thunderbird/$THUNDERBIRD_PROFILE/ImapMail"
@@ -89,21 +92,24 @@ monitor_account () {
 	done
 }
 
-# Clear the output file.
+printf "%s\n" 'Clear the output file.'
 write_target_clear
 
 while true; do
-	# Query the PID of Thunderbird.
+	printf "%s\n" 'Query the PID of Thunderbird.'
+	set +o errexit
 	tb_pid="$(pgrep -u $UID -x thunderbird)"
+	is_active="$?"
+	set -o errexit
 
 	# If Thunderbird is not active, try again.
 	# shellcheck disable=SC2181
-	if [ $? -ne 0 ]; then
-		sleep 1s
+	if [ $is_active -ne 0 ]; then
+		sleep 3s
 		continue
 	fi
 
-	# Setup one monitoring process per account.
+	printf "%s\n" 'Setup monitoring processes.'
 	for account in "$THUNDERBIRD_IMAPDIR"/*.unread; do
 		if [ -d "$account" ]; then
 			printf "%s\n" "Now monitoring '$account'."
@@ -113,12 +119,12 @@ while true; do
 
 	sleep 1s
 
-	# Wait for Thunderbird to terminate.
+	printf "%s\n" 'Wait for Thunderbird to terminate.'
 	tail --pid="$tb_pid" -f /dev/null
 
-	# Clear the output file.
+	printf "%s\n" 'Clear the output file.'
 	write_target_clear
 
-	# Terminate all monitoring processes.
+	printf "%s\n" 'Terminate all monitoring processes.'
 	pkill -P $$
 done
