@@ -1,4 +1,4 @@
-TARGET := thunderbird-unread
+TARGET := bin/thunderbird-unread
 
 .PHONY: check
 check:
