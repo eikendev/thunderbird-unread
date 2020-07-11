@@ -1,3 +1,10 @@
+.. image:: https://img.shields.io/travis/eikendev/thunderbird-unread/master
+    :alt: Build status
+    :target: https://travis-ci.com/github/eikendev/thunderbird-unread/builds/
+
+.. image:: https://img.shields.io/github/license/eikendev/thunderbird-unread
+    :alt: License
+
 About
 -----
 
