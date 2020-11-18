@@ -40,12 +40,11 @@ write_target_clear () {
 
 exit_cleanup () {
 	write_target_clear
-
-	# https://stackoverflow.com/a/2173421
-	trap - SIGTERM && kill -- -$$
 }
 
-trap exit_cleanup SIGINT SIGTERM EXIT
+# https://stackoverflow.com/a/53714583
+trap 'exit $exit_code' INT TERM
+trap 'exit_code=$?; exit_cleanup; kill 0' EXIT
 
 accumulate_counts () {
 	local row
@@ -92,9 +91,11 @@ monitor_account () {
 
 	count_unread "$account"
 
+	(
 	inotifywait -m -q -e modify -e move -e create -e delete -r "$account" | while read -r; do
-		count_unread "$account" &
+		count_unread "$account"
 	done
+	) &
 }
 
 printf "%s\n" 'Querying the PID of Thunderbird.'
@@ -111,7 +112,7 @@ fi
 printf "%s\n" 'Setting up monitoring processes.'
 for account in "$THUNDERBIRD_IMAPDIR"/*.unread; do
 	if [ -d "$account" ]; then
-		monitor_account "$account" &
+		monitor_account "$account"
 	fi
 done
 
