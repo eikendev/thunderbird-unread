@@ -40,9 +40,12 @@ write_target_clear () {
 
 exit_cleanup () {
 	write_target_clear
+
+	# https://stackoverflow.com/a/2173421
+	trap - SIGTERM && kill -- -$$
 }
 
-trap exit_cleanup EXIT
+trap exit_cleanup SIGINT SIGTERM EXIT
 
 accumulate_counts () {
 	local row
@@ -79,55 +82,47 @@ count_unread () {
 
 	printf '%d' "$total" > "$SCRIPT_HOME/$name.subcount"
 
-	accumulate_counts &
+	accumulate_counts
 }
 
 monitor_account () {
 	local account="$1"
 
-	count_unread "$account" &
+	printf "%s\n" "Now monitoring '$account'."
+
+	count_unread "$account"
 
 	inotifywait -m -q -e modify -e move -e create -e delete -r "$account" | while read -r; do
 		count_unread "$account" &
 	done
 }
 
-printf "%s\n" 'Clear the output file.'
+printf "%s\n" 'Clearing the output file.'
 write_target_clear
 
-while true; do
-	printf "%s\n" 'Query the PID of Thunderbird.'
-	set +o errexit
-	tb_pid="$(pgrep -u $UID -x thunderbird)"
-	is_active="$?"
-	set -o errexit
+printf "%s\n" 'Querying the PID of Thunderbird.'
+set +o errexit
+tb_pid="$(pgrep -u $UID -x thunderbird)"
+is_active="$?"
+set -o errexit
 
-	# If Thunderbird is not active, try again.
-	# shellcheck disable=SC2181
-	if [ $is_active -ne 0 ]; then
-		sleep 3s
-		continue
+if [ $is_active -ne 0 ]; then
+	printf "%s\n" 'Exiting because Thunderbird is not active.'
+	exit
+fi
+
+printf "%s\n" 'Setting up monitoring processes.'
+for account in "$THUNDERBIRD_IMAPDIR"/*.unread; do
+	if [ -d "$account" ]; then
+		monitor_account "$account" &
 	fi
-
-	printf "%s\n" 'Setup monitoring processes.'
-	for account in "$THUNDERBIRD_IMAPDIR"/*.unread; do
-		if [ -d "$account" ]; then
-			printf "%s\n" "Now monitoring '$account'."
-			monitor_account "$account" &
-		fi
-	done
-
-	sleep 1s
-
-	printf "%s\n" 'Wait for Thunderbird to terminate.'
-	set +o errexit
-	# tail returns with error when monitored process terminates.
-	tail --pid="$tb_pid" -f /dev/null
-	set -o errexit
-
-	printf "%s\n" 'Clear the output file.'
-	write_target_clear
-
-	printf "%s\n" 'Terminate all monitoring processes.'
-	pkill -P $$
 done
+
+printf "%s\n" 'Waiting for Thunderbird to terminate.'
+set +o errexit
+# tail returns with error when monitored process terminates.
+tail --pid="$tb_pid" -f /dev/null
+set -o errexit
+
+printf "%s\n" 'Clearing the output file.'
+write_target_clear
