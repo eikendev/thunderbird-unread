@@ -43,6 +43,7 @@ exit_cleanup () {
 }
 
 # https://stackoverflow.com/a/53714583
+# shellcheck disable=SC2154
 trap 'exit $exit_code' INT TERM
 trap 'exit_code=$?; exit_cleanup; kill 0' EXIT
 
