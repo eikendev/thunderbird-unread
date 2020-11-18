@@ -97,9 +97,6 @@ monitor_account () {
 	done
 }
 
-printf "%s\n" 'Clearing the output file.'
-write_target_clear
-
 printf "%s\n" 'Querying the PID of Thunderbird.'
 set +o errexit
 tb_pid="$(pgrep -u $UID -x thunderbird)"
