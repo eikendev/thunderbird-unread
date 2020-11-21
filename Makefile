@@ -1,5 +1,8 @@
-TARGET := bin/thunderbird-unread
+TARGET := ./bin/thunderbird-unread
 
-.PHONY: check
-check:
+.PHONY: test
+test: lint
+
+.PHONY: lint
+lint:
 	shellcheck ${TARGET}
