@@ -1,4 +1,4 @@
-[![Build status](https://img.shields.io/github/workflow/status/eikendev/eikendev/Main)](https://github.com/eikendev/eikendev/actions)
+[![Build status](https://img.shields.io/github/workflow/status/eikendev/thunderbird-unread/Main)](https://github.com/eikendev/thunderbird-unread/actions)
 ![License](https://img.shields.io/github/license/eikendev/thunderbird-unread)
 
 ## About
