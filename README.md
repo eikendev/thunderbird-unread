@@ -1,4 +1,4 @@
-[![Build status](https://img.shields.io/travis/eikendev/thunderbird-unread/master)](https://travis-ci.com/github/eikendev/thunderbird-unread/builds/)
+[![Build status](https://img.shields.io/github/workflow/status/eikendev/eikendev/Main)](https://github.com/eikendev/eikendev/actions)
 ![License](https://img.shields.io/github/license/eikendev/thunderbird-unread)
 
 ## About
