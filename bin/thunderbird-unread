@@ -58,6 +58,8 @@ count_unread () {
 	local total=0
 
 	local counts
+
+	set +o errexit
 	# shellcheck disable=SC2016
 	counts="$(rg \
 		--no-config \
@@ -70,6 +72,12 @@ count_unread () {
 		--glob '*.msf' \
 		--replace '$count' \
 		'(\(\^A2=\d+\))*\p{any}*\(\^A2=(?P<count>\d+)\)' "$account")"
+	success="$?"
+	set -o errexit
+
+	if [ $success -ne 0 ]; then
+		counts='0'
+	fi
 
 	for count in $counts; do
 		total=$((total + count))
