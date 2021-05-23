@@ -31,7 +31,7 @@ fi
 
 write_target () {
 	output="$1"
-	printf "%s  %s   " '' "$output" > "$TARGET_FILE"
+	printf '%s' "$output" > "$TARGET_FILE"
 }
 
 write_target_clear () {
