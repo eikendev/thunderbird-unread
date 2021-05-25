@@ -1,6 +1,11 @@
 [![Build status](https://img.shields.io/github/workflow/status/eikendev/thunderbird-unread/Main)](https://github.com/eikendev/thunderbird-unread/actions)
 ![License](https://img.shields.io/github/license/eikendev/thunderbird-unread)
 
+
+
+| :exclamation:  **This project was discontinued in favor of [tbunread](https://github.com/eikendev/tbunread).**   |
+|--------------------------------------------------------------------------------------------------------------|
+
 ## About
 
 This script outputs how many emails are unread in each account of Thunderbird.
